@@ -2,306 +2,572 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>yhan - Operasyon Merkezi</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>yhan // Operasyonel Gelişim Dashboard</title>
     <style>
         :root {
-            --bg-color: #0f172a;
-            --card-bg: #1e293b;
-            --accent: #38bdf8;
-            --text: #f8fafc;
-            --text-muted: #94a3b8;
-            --success: #4ade80;
+            --bg-main: #0b0f19;
+            --bg-card: #151f32;
+            --bg-inner: #1e293b;
+            --color-accent: #38bdf8;
+            --color-success: #4ade80;
+            --color-warning: #fbbf24;
+            --color-danger: #f87171;
+            --color-text: #f8fafc;
+            --color-muted: #64748b;
         }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
         body {
-            font-family: '-apple-system', BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-main);
+            color: var(--color-text);
             margin: 0;
-            padding: 10px;
+            padding: 12px;
+            padding-bottom: 140px;
         }
-        .header {
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header-panel {
+            background-color: var(--bg-card);
+            border-radius: 16px;
+            padding: 20px;
             text-align: center;
             margin-bottom: 20px;
-            border-bottom: 2px solid var(--card-bg);
-            padding-bottom: 15px;
-        }
-        .header h1 { color: var(--accent); margin: 0; font-size: 22px; letter-spacing: 1px; }
-        .header p { color: var(--text-muted); margin: 5px 0; font-size: 13px; }
-        
-        .perm-btn {
-            background-color: var(--accent);
-            color: #0f172a;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 20px;
-            font-weight: bold;
-            font-size: 12px;
-            cursor: pointer;
-            margin-bottom: 15px;
-            width: 100%;
+            border: 1px solid #1e293b;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
         }
 
-        .grid {
+        .header-panel h1 {
+            color: var(--color-accent);
+            margin: 0;
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+
+        .header-panel p {
+            color: var(--color-muted);
+            margin: 6px 0 15px 0;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .perm-btn {
+            background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            width: 100%;
+            max-width: 320px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(2, 132, 199, 0.4);
+        }
+
+        .perm-btn.active {
+            background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+            box-shadow: 0 4px 15px rgba(22, 163, 74, 0.4);
+        }
+
+        .matrix-grid {
             display: grid;
-            grid-template-columns: 1fr; /* Mobilde tek sütun */
+            grid-template-columns: 1fr;
             gap: 15px;
         }
-        
-        @media (min-width: 768px) {
-            .grid { grid-template-columns: repeat(5, 1fr); } /* Bilgisayarda 5 sütun */
-            body { padding: 20px; }
-            .header h1 { font-size: 28px; }
-            .perm-btn { width: auto; }
+
+        @media (min-width: 992px) {
+            .matrix-grid {
+                grid-template-columns: repeat(5, 1fr);
+            }
+            .header-panel h1 { font-size: 26px; }
         }
 
-        .day-column {
-            background-color: var(--card-bg);
-            border-radius: 12px;
-            padding: 15px;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+        .day-card {
+            background-color: var(--bg-card);
+            border-radius: 14px;
+            padding: 16px;
+            border: 1px solid #1e293b;
         }
-        .day-title {
-            font-size: 18px;
-            font-weight: bold;
-            color: var(--accent);
+
+        .day-header {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--color-accent);
             text-align: center;
-            border-bottom: 1px solid #334155;
-            padding-bottom: 10px;
-            margin-bottom: 15px;
+            padding-bottom: 12px;
+            margin-bottom: 14px;
+            border-bottom: 2px solid #1e293b;
         }
-        .time-block {
-            background-color: #0f172a;
-            border-left: 4px solid #475569;
+
+        .task-block {
+            background-color: var(--bg-main);
+            border-left: 4px solid #334155;
             padding: 12px;
             margin-bottom: 12px;
-            border-radius: 0 8px 8px 0;
+            border-radius: 4px 10px 10px 4px;
             transition: all 0.3s ease;
         }
-        .time-block.active {
-            border-left-color: var(--success);
-            box-shadow: 0 0 15px rgba(74, 222, 128, 0.2);
-            background-color: #14532d;
+
+        .task-block.break {
+            border-left-color: #475569;
+            background-color: rgba(30, 41, 59, 0.3);
+            opacity: 0.7;
         }
-        .time { font-size: 12px; color: var(--accent); font-weight: bold; }
-        .title { font-size: 14px; font-weight: bold; margin: 3px 0; }
-        .desc { font-size: 12px; color: var(--text-muted); }
-        
-        .alert-zone {
+
+        .task-block.active {
+            border-left-color: var(--color-success);
+            background: linear-gradient(90deg, #132b20 0%, #151f32 100%);
+            box-shadow: 0 0 20px rgba(74, 222, 128, 0.15);
+        }
+
+        .task-block.break.active {
+            border-left-color: var(--color-warning);
+            background: linear-gradient(90deg, #2d220f 0%, #151f32 100%);
+        }
+
+        .task-time {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--color-accent);
+            display: inline-block;
+            background-color: rgba(56, 189, 248, 0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-bottom: 6px;
+        }
+
+        .task-title {
+            font-size: 14px;
+            font-weight: 700;
+            margin: 0 0 4px 0;
+        }
+
+        .task-desc {
+            font-size: 12px;
+            color: var(--color-muted);
+            margin: 0;
+        }
+
+        /* Alt Sabit Kontrol ve Eskalasyon Paneli */
+        .bottom-bar {
             position: fixed;
             bottom: 0;
             left: 0;
             right: 0;
-            background-color: #1e293b;
-            border-top: 2px solid var(--accent);
-            padding: 15px;
-            text-align: center;
-            font-size: 15px;
-            z-index: 100;
+            background-color: rgba(21, 31, 50, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-top: 1px solid #1e293b;
+            padding: 12px 20px;
+            z-index: 1000;
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
         }
-        #current-task { color: var(--success); font-weight: bold; }
-        .spacer { height: 80px; } /* Alttaki barın üstünü kapatmaması için */
+
+        .status-message {
+            font-size: 13px;
+            font-weight: 600;
+            text-align: center;
+            color: var(--color-text);
+        }
+
+        #task-focus {
+            color: var(--color-success);
+            font-weight: 700;
+        }
+
+        .control-btns {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 10px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 700;
+            font-size: 12px;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: none; /* Dinamik açılacak */
+        }
+
+        .snooze-btn {
+            background-color: var(--color-warning);
+            color: #0b0f19;
+        }
+
+        .done-btn {
+            background-color: var(--color-success);
+            color: #0b0f19;
+        }
+
+        .signature {
+            font-size: 11px;
+            color: rgba(100, 116, 139, 0.4);
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <h1>yhan // DİNAMİK GELİŞİM MERKEZİ</h1>
-        <p>Sistem Aktif • Mobil & Masaüstü Senkronize</p>
-        <button class="perm-btn" onclick="initSystem()">🔊 SES VE BİLDİRİMLERİ AKTİF ET</button>
+    <div class="container">
+        <div class="header-panel">
+            <h1>yhan // OPERASYON MERKEZİ</h1>
+            <p>Eskalasyon ve Akıllı İkaz Entegrasyonu • v2.0</p>
+            <button class="perm-btn" onclick="activateSystem()">🔊 SİSTEMİ AKTİF ET</button>
+        </div>
+
+        <div class="matrix-grid">
+            <!-- PAZARTESİ -->
+            <div class="day-card">
+                <div class="day-header">Pazartesi</div>
+                <div class="task-block" data-start="09:00" data-end="10:00">
+                    <span class="task-time">09:00 - 10:00</span>
+                    <h3 class="task-title">Vizyon Kahvesi</h3>
+                    <p class="task-desc">HBR Türkiye Dergisi Okuması (Fiziki)</p>
+                </div>
+                <div class="task-block break" data-start="10:00" data-end="10:10">
+                    <span class="task-time">10:00 - 10:10</span>
+                    <h3 class="task-title">☕ Setup Molası</h3>
+                </div>
+                <div class="task-block" data-start="10:10" data-end="11:10">
+                    <span class="task-time">10:10 - 11:10</span>
+                    <h3 class="task-title">Sosyalleşme / Ağ Kurma</h3>
+                    <p class="task-desc">Sektörel dostlarla iletişim.</p>
+                </div>
+                <div class="task-block break" data-start="11:10" data-end="11:20">
+                    <span class="task-time">11:10 - 11:20</span>
+                    <h3 class="task-title">☕ Setup Molası</h3>
+                </div>
+                <div class="task-block" data-start="11:20" data-end="12:50">
+                    <span class="task-time">11:20 - 12:50</span>
+                    <h3 class="task-title">Dil Becerileri</h3>
+                    <p class="task-desc">Learna AI (Grammar & Kelime)</p>
+                </div>
+                <div class="task-block" data-start="13:40" data-end="15:00">
+                    <span class="task-time">13:40 - 15:00</span>
+                    <h3 class="task-title">Teknik Gelişim (Excel)</h3>
+                    <p class="task-desc">Excel 751 Gelişmiş Formüller</p>
+                </div>
+                <div class="task-block break" data-start="15:00" data-end="15:10">
+                    <span class="task-time">15:00 - 15:10</span>
+                    <h3 class="task-title">☕ Setup Molası</h3>
+                </div>
+                <div class="task-block" data-start="15:10" data-end="16:10">
+                    <span class="task-time">15:10 - 16:10</span>
+                    <h3 class="task-title">📖 Gün Kapanış Seansı</h3>
+                    <p class="task-desc">Edebi Derinleşme ve Kitap Okuma</p>
+                </div>
+            </div>
+
+            <!-- SALI -->
+            <div class="day-card">
+                <div class="day-header">Salı</div>
+                <div class="task-block" data-start="09:00" data-end="10:00">
+                    <span class="task-time">09:00 - 10:00</span>
+                    <h3 class="task-title">Vizyon Kahvesi</h3>
+                    <p class="task-desc">HBR Türkiye Dergisi Okuması (Fiziki)</p>
+                </div>
+                <div class="task-block break" data-start="10:00" data-end="10:10">
+                    <span class="task-time">10:00 - 10:10</span>
+                    <h3 class="task-title">☕ Setup Molası</h3>
+                </div>
+                <div class="task-block" data-start="10:10" data-end="11:10">
+                    <span class="task-time">10:10 - 11:10</span>
+                    <h3 class="task-title">Stratejik İlan Taraması</h3>
+                    <p class="task-desc">Kariyer & LinkedIn İlan Avcısı Rapor Analizi</p>
+                </div>
+                <div class="task-block break" data-start="11:10" data-end="11:20">
+                    <span class="task-time">11:10 - 11:20</span>
+                    <h3 class="task-title">☕ Setup Molası</h3>
+                </div>
+                <div class="task-block" data-start="11:20" data-end="12:50">
+                    <span class="task-time">11:20 - 12:50</span>
+                    <h3 class="task-title">Mesleki Role-Play</h3>
+                    <p class="task-desc">Advanced Voice Mode Simülasyonu</p>
+                </div>
+                <div class="task-block" data-start="15:10" data-end="16:10">
+                    <span class="task-time">15:10 - 16:10</span>
+                    <h3 class="task-title">📖 Gün Kapanış Seansı</h3>
+                    <p class="task-desc">Edebi Derinleşme ve Kitap Okuma</p>
+                </div>
+            </div>
+
+            <!-- ÇARŞAMBA -->
+            <div class="day-card">
+                <div class="day-header">Çarşamba</div>
+                <div class="task-block" data-start="09:00" data-end="10:00">
+                    <span class="task-time">09:00 - 10:00</span>
+                    <h3 class="task-title">Vizyon Kahvesi</h3>
+                    <p class="task-desc">HBR Türkiye Dergisi Okuması (Fiziki)</p>
+                </div>
+                <div class="task-block break" data-start="10:00" data-end="10:10">
+                    <span class="task-time">10:00 - 10:10</span>
+                    <h3 class="task-title">☕ Setup Molası</h3>
+                </div>
+                <div class="task-block" data-start="10:10" data-end="11:10">
+                    <span class="task-time">10:10 - 11:10</span>
+                    <h3 class="task-title">Sosyalleşme / Dinlenme</h3>
+                    <p class="task-desc">Zihinsel deşarj ve serbest zaman.</p>
+                </div>
+                <div class="task-block break" data-start="11:10" data-end="11:20">
+                    <span class="task-time">11:10 - 11:20</span>
+                    <h3 class="task-title">☕ Setup Molası</h3>
+                </div>
+                <div class="task-block" data-start="11:20" data-end="12:50">
+                    <span class="task-time">11:20 - 12:50</span>
+                    <h3 class="task-title">Dil Becerileri</h3>
+                    <p class="task-desc">Learna AI Pratikleri</p>
+                </div>
+                <div class="task-block" data-start="13:40" data-end="15:00">
+                    <span class="task-time">13:40 - 15:00</span>
+                    <h3 class="task-title">Teknik Gelişim (PPT)</h3>
+                    <p class="task-desc">One Skill PPT Tasarım Teknikleri</p>
+                </div>
+                <div class="task-block break" data-start="15:00" data-end="15:10">
+                    <span class="task-time">15:00 - 15:10</span>
+                    <h3 class="task-title">☕ Setup Molası</h3>
+                </div>
+                <div class="task-block" data-start="15:10" data-end="16:10">
+                    <span class="task-time">15:10 - 16:10</span>
+                    <h3 class="task-title">📖 Gün Kapanış Seansı</h3>
+                    <p class="task-desc">Edebi Derinleşme ve Kitap Okuma</p>
+                </div>
+            </div>
+
+            <!-- PERŞEMBE -->
+            <div class="day-card">
+                <div class="day-header">Perşembe</div>
+                <div class="task-block" data-start="09:00" data-end="10:00">
+                    <span class="task-time">09:00 - 10:00</span>
+                    <h3 class="task-title">Vizyon Kahvesi</h3>
+                    <p class="task-desc">HBR Türkiye Dergisi Okuması (Fiziki)</p>
+                </div>
+                <div class="task-block break" data-start="10:00" data-end="10:10">
+                    <span class="task-time">10:00 - 10:10</span>
+                    <h3 class="task-title">☕ Setup Molası</h3>
+                </div>
+                <div class="task-block" data-start="10:10" data-end="11:10">
+                    <span class="task-time">10:10 - 11:10</span>
+                    <h3 class="task-title">İlan & LinkedIn İçeriği</h3>
+                    <p class="task-desc">İlan Taraması + Haftalık Post Yayını</p>
+                </div>
+                <div class="task-block break" data-start="11:10" data-end="11:20">
+                    <span class="task-time">11:10 - 11:20</span>
+                    <h3 class="task-title">☕ Setup Molası</h3>
+                </div>
+                <div class="task-block" data-start="11:20" data-end="12:50">
+                    <span class="task-time">11:20 - 12:50</span>
+                    <h3 class="task-title">Mesleki Role-Play</h3>
+                    <p class="task-desc">Advanced Voice Mode Mülakat Pratiği</p>
+                </div>
+                <div class="task-block" data-start="15:10" data-end="16:10">
+                    <span class="task-time">15:10 - 16:10</span>
+                    <h3 class="task-title">📖 Gün Kapanış Seansı</h3>
+                    <p class="task-desc">Edebi Derinleşme ve Kitap Okuma</p>
+                </div>
+            </div>
+
+            <!-- CUMA -->
+            <div class="day-card">
+                <div class="day-header">Cuma</div>
+                <div class="task-block" data-start="09:00" data-end="10:00">
+                    <span class="task-time">09:00 - 10:00</span>
+                    <h3 class="task-title">Vizyon Kahvesi</h3>
+                    <p class="task-desc">HBR Türkiye Dergisi Okuması (Fiziki)</p>
+                </div>
+                <div class="task-block break" data-start="10:00" data-end="10:10">
+                    <span class="task-time">10:00 - 10:10</span>
+                    <h3 class="task-title">☕ Setup Molası</h3>
+                </div>
+                <div class="task-block" data-start="10:10" data-end="11:10">
+                    <span class="task-time">10:10 - 11:10</span>
+                    <h3 class="task-title">Sosyalleşme & Kapanış</h3>
+                    <p class="task-desc">Haftalık ağ değerlendirmesi.</p>
+                </div>
+                <div class="task-block break" data-start="11:10" data-end="11:20">
+                    <span class="task-time">11:10 - 11:20</span>
+                    <h3 class="task-title">☕ Setup Molası</h3>
+                </div>
+                <div class="task-block" data-start="11:20" data-end="12:50">
+                    <span class="task-time">11:20 - 12:50</span>
+                    <h3 class="task-title">Dil Becerileri</h3>
+                    <p class="task-desc">Learna AI Genel Kapanış</p>
+                </div>
+                <div class="task-block" data-start="13:40" data-end="15:00">
+                    <span class="task-time">13:40 - 15:00</span>
+                    <h3 class="task-title">Vaka Analizi & Raporlar</h3>
+                    <p class="task-desc">Küresel Gelişmeler ve Sektör Analizleri</p>
+                </div>
+                <div class="task-block break" data-start="15:00" data-end="15:10">
+                    <span class="task-time">15:00 - 15:10</span>
+                    <h3 class="task-title">☕ Setup Molası</h3>
+                </div>
+                <div class="task-block" data-start="15:10" data-end="16:10">
+                    <span class="task-time">15:10 - 16:10</span>
+                    <h3 class="task-title">📖 Gün Kapanış Seansı</h3>
+                    <p class="task-desc">Edebi Derinleşme ve Kitap Okuma</p>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div class="grid">
-        <!-- PAZARTESİ -->
-        <div class="day-column">
-            <div class="day-title">Pazartesi</div>
-            <div class="time-block" data-start="09:00" data-end="10:00">
-                <div class="time">09:00 - 10:00</div>
-                <div class="title">Vizyon Kahvesi</div>
-                <div class="desc">HBR Türkiye Dergisi Okuması (Fiziki)</div>
-            </div>
-            <div class="time-block" data-start="10:00" data-end="11:00">
-                <div class="time">10:00 - 11:00</div>
-                <div class="title">Sosyalleşme / Kahve</div>
-                <div class="desc">Ağ oluşturma, dostlarla iletişim.</div>
-            </div>
-            <div class="time-block" data-start="11:15" data-end="12:45">
-                <div class="time">11:15 - 12:45</div>
-                <div class="title">Dil Gelişimi</div>
-                <div class="desc">Learna AI (Grammar & Kelime)</div>
-            </div>
-            <div class="time-block" data-start="14:00" data-end="15:30">
-                <div class="time">14:00 - 15:30</div>
-                <div class="title">Teknik Gelişim</div>
-                <div class="desc">Excel 751 & YouTube Şablon Çalışması</div>
-            </div>
+    <!-- Alt Kontrol Alanı -->
+    <div class="bottom-bar">
+        <div class="status-message">
+            📢 Durum: <span id="task-focus">Sistem Hazır. Başlatılması Bekleniyor.</span>
         </div>
-
-        <!-- SALI -->
-        <div class="day-column">
-            <div class="day-title">Salı</div>
-            <div class="time-block" data-start="09:00" data-end="10:00">
-                <div class="time">09:00 - 10:00</div>
-                <div class="title">Vizyon Kahvesi</div>
-                <div class="desc">HBR Türkiye Dergisi Okuması (Fiziki)</div>
-            </div>
-            <div class="time-block" data-start="10:00" data-end="11:00">
-                <div class="time">10:00 - 11:00</div>
-                <div class="title">İlan Taraması (Aktif)</div>
-                <div class="desc">Kariyer.net & LinkedIn Tarama</div>
-            </div>
-            <div class="time-block" data-start="11:15" data-end="12:45">
-                <div class="time">11:15 - 12:45</div>
-                <div class="title">Dil Gelişimi</div>
-                <div class="desc">ChatGPT Advanced Voice (Mesleki Role-Play)</div>
-            </div>
+        <div class="control-btns">
+            <button class="action-btn snooze-btn" onclick="snoozeTask()">⏳ 10 DK ERTELE</button>
+            <button class="action-btn done-btn" onclick="completeTask()">✔️ BAŞLADIM / BİTTİ</button>
         </div>
-
-        <!-- ÇARŞAMBA -->
-        <div class="day-column">
-            <div class="day-title">Çarşamba</div>
-            <div class="time-block" data-start="09:00" data-end="10:00">
-                <div class="time">09:00 - 10:00</div>
-                <div class="title">Vizyon Kahvesi</div>
-                <div class="desc">HBR Türkiye Dergisi Okuması (Fiziki)</div>
-            </div>
-            <div class="time-block" data-start="10:00" data-end="11:00">
-                <div class="time">10:00 - 11:00</div>
-                <div class="title">Sosyalleşme / Dinlenme</div>
-                <div class="desc">Zihni boşaltma ve kahve molası.</div>
-            </div>
-            <div class="time-block" data-start="11:15" data-end="12:45">
-                <div class="time">11:15 - 12:45</div>
-                <div class="title">Dil Gelişimi</div>
-                <div class="desc">Learna AI (Grammar & Kelime)</div>
-            </div>
-            <div class="time-block" data-start="14:00" data-end="15:30">
-                <div class="time">14:00 - 15:30</div>
-                <div class="title">Teknik Gelişim</div>
-                <div class="desc">One Skill PowerPoint Tasarım Çalışması</div>
-            </div>
-        </div>
-
-        <!-- PERŞEMBE -->
-        <div class="day-column">
-            <div class="day-title">Perşembe</div>
-            <div class="time-block" data-start="09:00" data-end="10:00">
-                <div class="time">09:00 - 10:00</div>
-                <div class="title">Vizyon Kahvesi</div>
-                <div class="desc">HBR Türkiye Dergisi Okuması (Fiziki)</div>
-            </div>
-            <div class="time-block" data-start="10:00" data-end="11:00">
-                <div class="time">10:00 - 11:00</div>
-                <div class="title">İlan & LinkedIn Post</div>
-                <div class="desc">İlan Taraması + LinkedIn Post Yayını (yhan)</div>
-            </div>
-            <div class="time-block" data-start="11:15" data-end="12:45">
-                <div class="time">11:15 - 12:45</div>
-                <div class="title">Dil Gelişimi</div>
-                <div class="desc">ChatGPT Advanced Voice (Mesleki Role-Play)</div>
-            </div>
-        </div>
-
-        <!-- CUMA -->
-        <div class="day-column">
-            <div class="day-title">Cuma</div>
-            <div class="time-block" data-start="09:00" data-end="10:00">
-                <div class="time">09:00 - 10:00</div>
-                <div class="time">09:00 - 10:00</div>
-                <div class="title">Vizyon Kahvesi</div>
-                <div class="desc">HBR Türkiye Dergisi Okuması (Fiziki)</div>
-            </div>
-            <div class="time-block" data-start="10:00" data-end="11:00">
-                <div class="title">Sosyalleşme / Networking</div>
-                <div class="desc">Haftalık kapanış görüşmeleri.</div>
-            </div>
-            <div class="time-block" data-start="11:15" data-end="12:45">
-                <div class="time">11:15 - 12:45</div>
-                <div class="title">Dil Gelişimi</div>
-                <div class="desc">Learna AI (Haftalık Özet & Pratik)</div>
-            </div>
-            <div class="time-block" data-start="14:00" data-end="15:30">
-                <div class="time">14:00 - 15:30</div>
-                <div class="title">Vaka & Konferans</div>
-                <div class="desc">Agent Raporları İnceleme Saati</div>
-            </div>
-        </div>
-    </div>
-
-    <div class="spacer"></div>
-    <div class="alert-zone">
-        📢 <span id="current-task">Sistem hazır. Butona basarak ses/bildirim izni verin.</span>
+        <div class="signature">yhan</div>
     </div>
 
     <script>
-        window.systemActive = false;
+        window.isLive = false;
+        window.currentActiveTask = null;
+        window.snoozeCount = 0;
+        window.snoozeUntil = null;
 
-        function initSystem() {
-            // Bildirim İzni İste
-            if ("Notification" in window) {
-                Notification.requestPermission().then(perm => {
-                    if (perm === "granted") {
-                        new Notification("yhan Sistem Merkez", { body: "Mobil bildirimler başarıyla aktif edildi!" });
-                    }
-                });
-            }
-            // Ses İzni ve İlk Karşılama
-            window.systemActive = true;
-            speak("Sistem senkronizasyonu sağlandı. Haydi iş başına!");
-            document.querySelector('.perm-btn').innerText = "✔️ SİSTEM AKTİF VE BAĞLI";
-            document.querySelector('.perm-btn').style.backgroundColor = "#4ade80";
-            checkTime();
+        function activateSystem() {
+            if ("Notification" in window) Notification.requestPermission();
+            window.isLive = true;
+            triggerSpeech("yhan yönetim sistemi aktif edildi. Akıllı eskalasyon devrede.");
+            
+            const btn = document.querySelector('.perm-btn');
+            btn.innerText = "✔️ SİSTEM CANLI";
+            btn.classList.add('active');
+            
+            evaluateSchedule();
         }
 
-        function checkTime() {
-            if (!window.systemActive) return;
+        function evaluateSchedule() {
+            if (!window.isLive) return;
 
-            const now = new Date();
-            const days = ['Pazar', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi'];
-            const currentDayStr = days[now.getDay()];
-            const currentTimeStr = now.toTimeString().substring(0, 5);
+            const current = new Date();
+            const daysVector = ['Pazar', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi'];
+            const activeDay = daysVector[current.getDay()];
+            const activeTime = current.toTimeString().substring(0, 5);
 
-            document.querySelectorAll('.time-block').forEach(b => b.classList.remove('active'));
-            let activeTask = "Şu an planlı bir aktivite yok. Dinlenmenin tadını çıkar!";
+            // Erteleme kontrolü
+            if (window.snoozeUntil && current < window.snoozeUntil) {
+                document.getElementById('task-focus').innerText = `Görev Ertelendi. Kalan süre var.`;
+                return;
+            } else if (window.snoozeUntil && current >= window.snoozeUntil) {
+                window.snoozeUntil = null; // Erteleme süresi bitti
+            }
 
-            const columns = document.querySelectorAll('.day-column');
-            columns.forEach(col => {
-                const title = col.querySelector('.day-title').innerText;
-                if (title === currentDayStr) {
-                    const blocks = col.querySelectorAll('.time-block');
-                    blocks.forEach(block => {
+            let foundTask = null;
+            document.querySelectorAll('.task-block').forEach(el => el.classList.remove('active'));
+
+            const cards = document.querySelectorAll('.day-card');
+            cards.forEach(card => {
+                if (card.querySelector('.day-header').innerText === activeDay) {
+                    card.querySelectorAll('.task-block').forEach(block => {
                         const start = block.getAttribute('data-start');
                         const end = block.getAttribute('data-end');
-                        
-                        if (currentTimeStr >= start && currentTimeStr < end) {
+                        if (activeTime >= start && activeTime < end) {
                             block.classList.add('active');
-                            const taskName = block.querySelector('.title').innerText;
-                            activeTask = `Haydi iş başına! Görev: ${taskName}`;
-                            
-                            if (window.lastAlertedTask !== taskName) {
-                                speak(activeTask);
-                                if (Notification.permission === "granted") {
-                                    new Notification("yhan Görev Zamanı!", { body: taskName, icon: "https://via.placeholder.com/128" });
-                                }
-                                window.lastAlertedTask = taskName;
-                            }
+                            foundTask = block;
                         }
                     });
                 }
             });
-            
-            document.getElementById('current-task').innerText = activeTask;
-        }
 
-        function speak(text) {
-            if ('speechSynthesis' in window) {
-                const utterance = new SpeechSynthesisUtterance(text);
-                utterance.lang = 'tr-TR';
-                window.speechSynthesis.speak(utterance);
+            const snoozeBtn = document.querySelector('.snooze-btn');
+            const doneBtn = document.querySelector('.done-btn');
+
+            if (foundTask) {
+                const titleText = foundTask.querySelector('.task-title').innerText;
+                
+                // Butonları görünür yap
+                snoozeBtn.style.display = "block";
+                doneBtn.style.display = "block";
+
+                if (window.currentActiveTask !== titleText) {
+                    window.currentActiveTask = titleText;
+                    window.snoozeCount = 0; // Yeni görev için sayacı sıfırla
+                    
+                    let alertMsg = foundTask.classList.contains('break') ? `Mola Zamanı: ${titleText}` : `Haydi iş başına! Görev: ${titleText}`;
+                    document.getElementById('task-focus').innerText = alertMsg;
+                    
+                    triggerSpeech(alertMsg);
+                    if (Notification.permission === "granted") {
+                        new Notification("yhan // Yeni Görev", { body: titleText });
+                    }
+                } else if (window.snoozeCount > 0 && !window.snoozeUntil) {
+                    // Görev zamanı devam ediyor ama kullanıcı hâlâ "Başladım" dememişse (Sert İkaz)
+                    document.getElementById('task-focus').innerText = `⚠️ İKAZ: ${titleText} görevine başlamadınız!`;
+                    triggerEskalationSpeech(titleText);
+                }
+            } else {
+                window.currentActiveTask = null;
+                snoozeBtn.style.display = "none";
+                doneBtn.style.display = "none";
+                document.getElementById('task-focus').innerText = "Şu an planlı bir aktivite yok. Dinlenmenin tadını çıkar!";
             }
         }
 
-        setInterval(checkTime, 20000); // 20 saniyede bir kontrol et
+        function snoozeTask() {
+            window.snoozeCount++;
+            const now = new Date();
+            window.snoozeUntil = new Date(now.getTime() + 10 * 60000); // 10 dakika ekle
+            
+            document.getElementById('task-focus').innerText = `Görev 10 dakika ertelendi.`;
+            triggerSpeech("Görev 10 dakika ertelendi. Zaman yönetimini unutma.");
+        }
+
+        function completeTask() {
+            window.snoozeUntil = null;
+            window.snoozeCount = 0;
+            document.getElementById('task-focus').innerText = `Harika! Görev başarıyla onaylandı.`;
+            triggerSpeech("Tebrikler yhan, süreç başarıyla onaylandı.");
+            // Bir sonraki dakikaya kadar alarmı susturmak için geçici olarak görevi kilitle
+            window.snoozeUntil = new Date(new Date().getTime() + 1 * 60000); 
+        }
+
+        function triggerSpeech(phrase) {
+            if ('speechSynthesis' in window) {
+                const voiceUnit = new SpeechSynthesisUtterance(phrase);
+                voiceUnit.lang = 'tr-TR';
+                voiceUnit.rate = 0.95;
+                window.speechSynthesis.speak(voiceUnit);
+            }
+        }
+
+        function triggerEskalationSpeech(taskName) {
+            if ('speechSynthesis' in window) {
+                let text = `yhan, ${taskName} saati geçiyor. 15 yıllık operasyonel vizyonun ve kariyer hedeflerin için zaman matrisine sadık kalmalı ve aksiyona geçmelisin.`;
+                const voiceUnit = new SpeechSynthesisUtterance(text);
+                voiceUnit.lang = 'tr-TR';
+                voiceUnit.rate = 0.92; // Daha vurgulu ve yavaş tonlama
+                window.speechSynthesis.speak(voiceUnit);
+            }
+        }
+
+        setInterval(evaluateSchedule, 15000); // 15 saniyede bir kontrol et
     </script>
 </body>
 </html>
